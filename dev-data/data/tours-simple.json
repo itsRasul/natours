@@ -136,5 +136,5 @@
   },
   { "id": 9, "name": "my new tour", "duration": 10, "difficulty": "easy" },
   { "id": 10, "name": "qom", "duration": 10, "difficulty": "easy" },
-  { "id2": 1, "name": "mashhad adrdahal", "duration": 5, "difficulty": "easy" }
+  { "id": 12, "name": "mashhad adrdahal", "duration": 5, "difficulty": "easy" }
 ]
