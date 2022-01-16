@@ -1,15 +1,17 @@
 const fs = require('fs');
 const express = require('express');
 const res = require('express/lib/response');
+const morgan = require('morgan');
 
 const app = express();
+
 app.use(express.json());
+app.use(morgan('dev'));
 
 // reading file
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
-);
+const tours = JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`));
 
+// ROUTE HANDLING
 const getAllTours = (req, res) => {
   // we wanna send back the whole tours data by reading json-tours
   res.status(200).json({
@@ -22,7 +24,6 @@ const getAllTours = (req, res) => {
 };
 
 const getTour = (req, res) => {
-  // console.log(req.params);
   const id = Number(req.params.id);
 
   if (id > tours.length) {
@@ -41,8 +42,6 @@ const getTour = (req, res) => {
       tour,
     },
   });
-
-  res.send('hey');
 };
 
 const createTour = (req, res) => {
@@ -50,15 +49,11 @@ const createTour = (req, res) => {
   const newTour = Object.assign({ id: newId }, req.body);
   tours.push(newTour);
 
-  fs.writeFile(
-    `${__dirname}/dev-data/data/tours-simple.json`,
-    JSON.stringify(tours),
-    (err) => {
-      res.status(201).json({
-        newTour,
-      });
-    }
-  );
+  fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`, JSON.stringify(tours), (err) => {
+    res.status(201).json({
+      newTour,
+    });
+  });
 };
 
 const updateTour = (req, res) => {
@@ -77,19 +72,15 @@ const updateTour = (req, res) => {
     }
   }
   const updatedTour = tours[id];
-  fs.writeFile(
-    `${__dirname}/dev-data/data/tours-simple.json`,
-    JSON.stringify(tours),
-    (err) => {
-      res.status(200).json({
-        status: 'success',
-        message: 'resource updated successfully',
-        data: {
-          tour: updatedTour,
-        },
-      });
-    }
-  );
+  fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`, JSON.stringify(tours), (err) => {
+    res.status(200).json({
+      status: 'success',
+      message: 'resource updated successfully',
+      data: {
+        tour: updatedTour,
+      },
+    });
+  });
 };
 
 const deleteTour = (req, res) => {
@@ -103,20 +94,16 @@ const deleteTour = (req, res) => {
   }
   if (tours[id].id === id) {
     const deletedTour = tours.splice(id, 1);
-    fs.writeFile(
-      `${__dirname}/dev-data/data/tours-simple.json`,
-      JSON.stringify(tours),
-      (err) => {
-        if (err) console.log('an erro occured');
-        res.status(204).json({
-          status: 'success',
-          message: 'recourse successfully deleted',
-          data: {
-            tour: deletedTour,
-          },
-        });
-      }
-    );
+    fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`, JSON.stringify(tours), (err) => {
+      if (err) console.log('an erro occured');
+      res.status(204).json({
+        status: 'success',
+        message: 'recourse successfully deleted',
+        data: {
+          tour: deletedTour,
+        },
+      });
+    });
   } else {
     res.status(404).json({
       status: 'fail',
@@ -125,14 +112,56 @@ const deleteTour = (req, res) => {
   }
 };
 
-//tours routing
-app.route('/api/v1/tours').get(getAllTours).post(createTour);
-app
-  .route('/api/v1/tours/:id')
-  .get(getTour)
-  .patch(updateTour)
-  .delete(deleteTour);
+const getAllUsers = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'this route handling is not yet defiend!',
+  });
+};
 
+const createUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'this route handling is not yet defiend!',
+  });
+};
+
+const getUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'this route handling is not yet defiend!',
+  });
+};
+
+const updateUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'this route handling is not yet defiend!',
+  });
+};
+
+const deleteUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'this route handling is not yet defiend!',
+  });
+};
+// ROUTES
+
+//tours routing
+const toursRouter = new express.Router();
+toursRouter.route('/').get(getAllTours).post(createTour);
+toursRouter.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
+
+// users routing
+const usersRouter = new express.Router();
+usersRouter.route('/').get(getAllUsers).post(createUser);
+usersRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
+
+app.use('/api/v1/tours', toursRouter);
+app.use('/api/v1/users', usersRouter);
+
+// LISTEN
 const port = 3000;
 app.listen(port, () => {
   console.log('im listening on port: ' + port);
