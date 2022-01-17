@@ -5,3 +5,7 @@ public/img/
 dev-data/img/
 
 .prettierrc
+
+.eslintrc.json
+
+.env
