@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "start:pro": "NODE_ENV=production nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,7 @@
   "dependencies": {
     "dotenv": "^13.0.1",
     "express": "^4.17.2",
+    "mongoose": "^5.13.14",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
