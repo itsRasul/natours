@@ -2,11 +2,27 @@ const Tour = require('../models/tourModel');
 
 exports.getAllTours = async (req, res) => {
   try {
+    // BUILD FILTERING
+    // 1A) FILTERING (DELETE SORT-LIMIT-PAGE-FIELD OF QUERY OBJECT) CUASE THESE AREN'T RELATED TO FILTERING AND QUERING
     const queryObj = { ...req.query };
     const exclude = ['sort', 'limit', 'page', 'fields'];
     exclude.forEach((el) => delete queryObj[el]);
 
-    const query = Tour.find(queryObj);
+    // 1B) ADD ADVANCED FILTERING OPERATIONS (LTE-LT-GTE-GT OPERATIONS)
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (match) => `$${match}`);
+    let query = Tour.find(JSON.parse(queryStr));
+
+    // 1) SORTING
+    if (req.query.sort) {
+      console.log(req.query.sort);
+      const sortBy = req.query.sort.split(',').join(' ');
+      console.log(sortBy);
+      query = query.sort(sortBy);
+    } else {
+      // default sorting
+      query = query.sort('createdAt');
+    }
 
     // const tours = await Tour.find()
     //   .where('duration')
@@ -14,7 +30,10 @@ exports.getAllTours = async (req, res) => {
     //   .where('difficulty')
     //   .equals(req.query.difficulty);
 
-    const tours = await query();
+    // CONSUME FILTERING
+    const tours = await query;
+
+    // SEND RESPONSE
     res.status(200).json({
       status: 'success',
       result: tours.length,
