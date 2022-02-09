@@ -96,6 +96,78 @@ exports.deleteTour = async (req, res) => {
   }
 };
 
+exports.getTourStats = async (req, res) => {
+  try {
+    const stats = await Tour.aggregate([
+      {
+        $match: { ratingAverage: { $gte: 4.5 } },
+      },
+      {
+        $group: {
+          _id: '$difficulty',
+          numTours: { $sum: 1 },
+          avgRating: { $avg: '$ratingAverage' },
+          avgPrice: { $avg: '$price' },
+          maxPrice: { $max: '$price' },
+          minPrice: { $min: '$price' },
+        },
+      },
+      {
+        $sort: { $price: 1 },
+      },
+    ]);
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        stats,
+      },
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'fail',
+      message: err,
+    });
+  }
+};
+
+exports.getMonthlyTours = async (req, res) => {
+  try {
+    const year = req.params.year * 1;
+    const monthlyTours = await Tour.aggregate([
+      {
+        $unwind: '$startDates',
+      },
+      {
+        $match: {
+          startDates: {
+            $gte: new Date(`${year}-01-01`).toISOString(),
+            $lte: new Date(`${year}-12-31`).toISOString(),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%m', date: '$startDates' } },
+          numTourStarts: { $sum: 1 },
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        monthlyTours,
+      },
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'fail',
+      message: err,
+    });
+  }
+};
+
 exports.aliesTopTours = async (req, res, next) => {
   req.query.sort = '-ratingAverage,price';
   req.query.limit = 5;
