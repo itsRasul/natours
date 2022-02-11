@@ -113,7 +113,7 @@ exports.getTourStats = async (req, res) => {
         },
       },
       {
-        $sort: { $price: 1 },
+        $sort: { avgPrice: 1 },
       },
     ]);
 
@@ -132,11 +132,15 @@ exports.getTourStats = async (req, res) => {
 };
 
 exports.getMonthlyTours = async (req, res) => {
+  // IT DOESN'T WORK, DON'T KNOW WHY
   try {
     const year = req.params.year * 1;
     const monthlyTours = await Tour.aggregate([
       {
-        $unwind: '$startDates',
+        $unwind: {
+          path: '$startDates',
+          includeArrayIndex: 'arrayIndex',
+        },
       },
       {
         $match: {
@@ -148,8 +152,14 @@ exports.getMonthlyTours = async (req, res) => {
       },
       {
         $group: {
-          _id: { $dateToString: { format: '%m', date: '$startDates' } },
+          _id: { $month: new Date('$startDates') },
           numTourStarts: { $sum: 1 },
+          name: { $push: '$name' },
+        },
+      },
+      {
+        $sort: {
+          numTourStarts: -1,
         },
       },
     ]);
