@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const validator = require('validator');
+// const validator = require('validator');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -11,6 +11,7 @@ const tourSchema = new mongoose.Schema(
       trim: true,
       minlength: [10, 'the Tour name must has above 10 charector.'],
       maxlength: [50, 'the Tour name must has below 50 charctor.'],
+      // // third party validator
       // validate: {
       //   validator: validator.isAlpha,
       //   message:
@@ -25,10 +26,10 @@ const tourSchema = new mongoose.Schema(
     priceDiscount: {
       type: Number,
       validate: {
+        // custome validator
         validator: function (val) {
           // this keyWord points to current document
           // this keyWord just points to current document so => this validator just work in .create(), NOT .update()
-          console.log(this);
           return val < this.price;
         },
         message: `priceDiscount {VALUE} should be less than ${this.price} field.`,
