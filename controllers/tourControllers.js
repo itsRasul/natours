@@ -1,6 +1,7 @@
 const Tour = require('../models/tourModel');
 const APIFeature = require('../utils/APIFeature');
 const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
 // Error handling with try catch
 exports.getAllTours = async (req, res, next) => {
   try {
@@ -23,10 +24,16 @@ exports.getAllTours = async (req, res, next) => {
   }
 };
 
-// Error handling with catchAsync Function: this way makes us to not using of catch block
+// Error handling with catchAsync Function: this way makes us to not using of Try catch blocks
 // in controller func
 exports.getTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findById(req.params.id);
+
+  if (!tour) {
+    throw new AppError('This tour is not exist', 404);
+    // this Error will be catched by catchAsync func
+    // return next(new AppError('This tour is not exist', 404));
+  }
 
   res.status(200).json({
     status: 'success',
@@ -51,6 +58,11 @@ exports.updateTour = catchAsync(async (req, res) => {
     runValidators: true,
   });
 
+  if (!tour) {
+    throw new AppError('This tour is not exist', 404);
+    // return next(new AppError('This tour is not exist', 404));
+  }
+
   res.status(200).json({
     status: 'success',
     data: {
@@ -60,14 +72,19 @@ exports.updateTour = catchAsync(async (req, res) => {
 });
 
 exports.deleteTour = catchAsync(async (req, res) => {
-  await Tour.findByIdAndDelete(req.params.id);
+  const tour = await Tour.findByIdAndDelete(req.params.id);
+
+  if (!tour) {
+    throw new AppError('This tour is not exist', 404);
+    // return next(new AppError('This tour is not exist', 404));
+  }
 
   res.status(204).json({
     status: 'success',
     data: null,
   });
 });
-
+// aggregation
 exports.getTourStats = catchAsync(async (req, res) => {
   const stats = await Tour.aggregate([
     {
@@ -95,7 +112,7 @@ exports.getTourStats = catchAsync(async (req, res) => {
     },
   });
 });
-
+// aggregation
 exports.getMonthlyTours = catchAsync(async (req, res) => {
   // IT DOESN'T WORK, DON'T KNOW WHY
   const year = req.params.year * 1;
