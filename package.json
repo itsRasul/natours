@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/itsRasul/natours#readme",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "dotenv": "^13.0.1",
     "express": "^4.17.2",
     "mongoose": "^5.13.14",
