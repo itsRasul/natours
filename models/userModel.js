@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'please provide a password'],
-    minLength: [8, 'password has to be more than 4 character'],
+    minLength: [8, 'password has to be more than 8 character'],
     // validate: {
     //   validator: validator.isStrongPassword(this.password, {
     //     minLowerCase: 1,
@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
   passwordConfirm: {
     type: String,
     required: [true, 'please confirm your password'],
-    minLength: [8, 'password has to be more than 4 character'],
+    minLength: [8, 'password has to be more than 8 character'],
     // this validator only executes on .save() and .create() (NOT .update or..)
     validate: {
       validator: function (val) {
@@ -57,6 +57,13 @@ userSchema.pre('save', async function (next) {
   this.passwordConfirm = undefined;
   next();
 });
+
+userSchema.methods.correctPassword = async function (
+  condidatePassword,
+  userPassword
+) {
+  return await bcrypt.compare(condidatePassword, userPassword);
+};
 
 const User = mongoose.model('User', userSchema);
 
