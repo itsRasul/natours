@@ -5,6 +5,7 @@ const AppError = require('../utils/appError');
 // Error handling with try catch
 exports.getAllTours = async (req, res, next) => {
   try {
+    console.log(Tour.find());
     const feature = new APIFeature(Tour.find(), req.query)
       .filter()
       .sort()
