@@ -1,34 +1,36 @@
-exports.getAllUsers = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'this route handling is not yet defiend!',
-  });
-};
+const catchAsync = require('../utils/catchAsync');
 
-exports.createUser = (req, res) => {
+exports.getAllUsers = catchAsync((req, res, next) => {
   res.status(500).json({
     status: 'error',
     message: 'this route handling is not yet defiend!',
   });
-};
+});
 
-exports.getUser = (req, res) => {
+exports.createUser = catchAsync((req, res, next) => {
   res.status(500).json({
     status: 'error',
     message: 'this route handling is not yet defiend!',
   });
-};
+});
 
-exports.updateUser = (req, res) => {
+exports.getUser = catchAsync((req, res, next) => {
   res.status(500).json({
     status: 'error',
     message: 'this route handling is not yet defiend!',
   });
-};
+});
 
-exports.deleteUser = (req, res) => {
+exports.updateUser = catchAsync((req, res, next) => {
   res.status(500).json({
     status: 'error',
     message: 'this route handling is not yet defiend!',
   });
-};
+});
+
+exports.deleteUser = catchAsync((req, res, next) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'this route handling is not yet defiend!',
+  });
+});
