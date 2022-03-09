@@ -11,6 +11,36 @@ const signToken = (id) =>
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
+const createSendToken = (user, statusCode, res, message) => {
+  // in addition we create token and send it back to client, we store the token in cookie
+  const cookiesOptions = {
+    // expires at 30 day => convert it to timestamp milisecond at create new Date obj from it
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIES_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    // secure => cookie will be sent only by https protocol, so when we're in development envirement it's not actull work
+    // when secure is true we have to use https to send cookie
+    // secure: true,
+    // when httpOnlu is true the cookie is not available in browser.. and only browser take the cookie, store it, send
+    // by each request, it prevent some XSS atacks
+    httpOnly: true,
+  };
+
+  if (process.env.NODE_ENV === 'production') cookiesOptions.secure = true;
+
+  const token = signToken(user._id);
+  res.cookie('jwt', token, cookiesOptions);
+  user.password = undefined;
+  res.status(statusCode).json({
+    status: 'success',
+    message,
+    token,
+    data: {
+      user,
+    },
+  });
+};
+
 exports.signUp = catchAsync(async (req, res, next) => {
   // const newUser = await User.create(req.body);
 
@@ -28,16 +58,7 @@ exports.signUp = catchAsync(async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm,
     passwordChangedAt: req.body.passwordChangedAt,
   });
-
-  // const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-  //   expiresIn: process.env.JWT_EXPIRES_IN,
-  // });
-  const token = signToken(newUser._id);
-  res.status(201).json({
-    status: 'success',
-    token,
-    user: newUser,
-  });
+  createSendToken(newUser, 201, res, 'you are signed up successfully!');
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -47,22 +68,14 @@ exports.login = catchAsync(async (req, res, next) => {
     throw new AppError('please provide your email and password', 401);
   }
   // 2) if user exist && password is correct
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).select('+password');
 
   // 3) if everyThing is ok, create a new token and send it to client
 
   if (!user || !(await user.correctPassword(password, user.password))) {
     throw new AppError('email or password are incorrect!', 401);
   }
-
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
-
-  res.status(200).json({
-    status: 'success',
-    token,
-  });
+  createSendToken(user, 200, res, 'you are logged in successfully!');
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -90,7 +103,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   );
 
   // 3) check if user still exists
-  const currentUser = await User.findById(decodeToken.id);
+  const currentUser = await User.findById(decodeToken.id).select('+password');
   if (!currentUser) {
     throw new AppError(
       'The user belonging to this token does no longer exist!',
@@ -140,7 +153,9 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     throw new AppError('please enter your email!', 400);
   }
   // 1) find user by email
-  const user = await User.findOne({ email: req.body.email });
+  const user = await User.findOne({ email: req.body.email }).select(
+    '+password'
+  );
   if (!user) {
     throw new AppError(
       'email is not exist! make sure you put correct email otherwise try another email.',
@@ -199,7 +214,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   const user = await User.findOne({
     resetPassword: hashedToken,
     resetPasswordExpires: { $gt: Date.now() },
-  });
+  }).select('+password');
 
   // 3) if token was correct, resetPasswordToken has not expired yet, set new password and passwordConfirm
   if (!user) {
@@ -215,12 +230,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   // 4) set changedPasswordAt
   // we did it in userModel (middleWare (userSchema.pre('save') ...));
   // 5) log in the user
-  const token = await signToken(user._id);
-  res.status(200).json({
-    status: 'success',
-    message: 'your password has changed successfully!',
-    token,
-  });
+  createSendToken(user, 200, res, 'your password has changed successfully!');
 });
 
 exports.updateMyPassword = catchAsync(async (req, res, next) => {
@@ -234,7 +244,7 @@ exports.updateMyPassword = catchAsync(async (req, res, next) => {
     );
   }
   // 1) Get the user
-  const user = await User.findById(req.user.id);
+  const user = await User.findById(req.user.id).select('+password');
   // 2) check current password is correct or NOT
   if (!(await user.correctPassword(req.body.currentPassword, user.password))) {
     throw new AppError('current password is false!', 400);
@@ -250,13 +260,12 @@ exports.updateMyPassword = catchAsync(async (req, res, next) => {
   user.passwordConfirm = req.body.passwordConfirm;
   await user.save();
   // 4) log user in
-  const token = signToken(user._id);
-
-  res.status(200).json({
-    status: 'success',
-    message: 'your password has been updated successfully!',
-    token,
-  });
+  createSendToken(
+    user,
+    200,
+    res,
+    'your password has been updated successfully!'
+  );
 });
 
 exports.deleteMe = catchAsync(async (req, res, next) => {

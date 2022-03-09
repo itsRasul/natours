@@ -30,7 +30,7 @@ exports.createUser = catchAsync((req, res, next) => {
   });
 });
 
-exports.getUser = catchAsync((req, res, next) => {
+exports.getUser = catchAsync(async (req, res, next) => {
   res.status(500).json({
     status: 'error',
     message: 'this route handling is not yet defiend!',
