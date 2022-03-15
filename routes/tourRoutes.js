@@ -1,8 +1,16 @@
 const express = require('express');
 const tourController = require('../controllers/tourControllers');
 const authController = require('../controllers/authController');
+const reviewRouter = require('./reviewRoutes');
 
 const router = new express.Router();
+
+// nested routes
+
+// instead of this => POST api/v1/review
+// we want this => POST api/v1/tours/adfs564f1sdf/reviews
+// to create review
+router.use('/:tourId/reviews', reviewRouter);
 
 // router.param('id', tourController.checkId);
 router

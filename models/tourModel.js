@@ -69,6 +69,36 @@ const tourSchema = new mongoose.Schema(
       select: false,
     },
     maxGroupSize: Number,
+    startLocation: {
+      // GeoJSON
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinate: [Number],
+      description: String,
+      address: String,
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinate: [Number],
+        address: String,
+        description: String,
+      },
+    ],
+    // child refrencing
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      },
+    ],
     difficulty: {
       type: String,
       required: [true, 'The tour must have a difficulty'],
@@ -94,9 +124,16 @@ tourSchema.virtual('durationWeeks').get(function () {
   return (this.duration / 7).toFixed(2) * 1;
 });
 
+tourSchema.virtual('review', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id',
+});
+
 // DOCUMENT MIDDLEWARES (THEY JUST WORK ON .SAVE & .CREATE METHOD | DON'T WORK ON .UPDATE .DELETE etc.)
 // PRE MIDDLEWARE
 tourSchema.pre('save', function (next) {
+  // in document MiddleWares 'this' keyword is gonna points to current document
   this.slug = slugify(this.name, { lower: true });
   next();
 });
@@ -115,7 +152,16 @@ tourSchema.pre('save', function (next) {
 // BUT WE USE REGEX TO SOLVE THIS PROBLME, BY THIS REGEX (/^FIND/) THE EVENT HANDLER(I MEAN QUERY MIDDLEWARE)
 // ACCEPTS ALL THE METHODS ABOUT QUERY LIKE .FIND & .FINDONE AND etc
 tourSchema.pre(/^find/, function (next) {
+  // in query MiddleWares 'this' keuword is gonna points to current query
   this.find({ secret: { $ne: true } });
+  next();
+});
+
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt',
+  });
   next();
 });
 // WE COULD JUST WRITE 'FIND' INSTEAD OF /^FIND/ REGEX
