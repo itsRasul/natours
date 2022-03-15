@@ -3,7 +3,10 @@ const mongoose = require('mongoose');
 const Tour = require('../../models/tourModel');
 require('dotenv').config();
 
-const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD);
+const DB = process.env.DATABASE.replace(
+  '<PASSWORD>',
+  process.env.DATABASE_PASSWORD
+);
 
 mongoose
   .connect(DB, {
@@ -14,7 +17,7 @@ mongoose
   })
   .then(() => console.log('mongoose is running well ...'));
 
-const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours-simple.json`, 'utf-8'));
+const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours.json`, 'utf-8'));
 
 // DELETE DATA TOURS FROM DB
 // eslint-disable-next-line no-unused-vars
@@ -33,6 +36,7 @@ const deleteData = async () => {
 const importData = async () => {
   try {
     await Tour.create(tours);
+    console.log('all data from tours.json is imported to DB successfully!');
   } catch (err) {
     console.log(err);
   }
@@ -41,5 +45,5 @@ const importData = async () => {
 
 // ******** delete func will delete All the docs in tours collection ************
 // deleteData();
-// ******** import func will import All the tours-simle.json to tours collection ************
+// ******** import func will import All the tours.json to tours collection ************
 // importData();

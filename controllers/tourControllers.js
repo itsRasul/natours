@@ -5,7 +5,6 @@ const AppError = require('../utils/appError');
 // Error handling with try catch
 exports.getAllTours = async (req, res, next) => {
   try {
-    console.log(Tour.find());
     const feature = new APIFeature(Tour.find(), req.query)
       .filter()
       .sort()
@@ -28,8 +27,17 @@ exports.getAllTours = async (req, res, next) => {
 // Error handling with catchAsync Function: this way makes us to not using of Try catch blocks
 // in controller func
 exports.getTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id);
+  // const tour = await Tour.findById(req.params.id).populate({
+  //   path: 'guides',
+  //   select: '-__v -passwordChangedAt',
+  // });
+  // we don't populate guides here like up codes, because this way we have to populate in all the query and make dublicate code
+  // so we actully populate 'guides' in query middleware in tourModel and it runs for every query without dublicate any code
 
+  // populate: populate method on query causes mongoose take whole data in 'path' property in DB instead of just id
+  // to do that, mongoose has to send another query in DB
+
+  const tour = await Tour.findById(req.params.id).populate('review');
   if (!tour) {
     throw new AppError('This tour is not exist', 404);
     // this Error will be catched by catchAsync func
