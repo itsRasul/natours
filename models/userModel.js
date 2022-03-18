@@ -58,23 +58,23 @@ const userSchema = new mongoose.Schema({
   resetPasswordExpires: Date,
 });
 // hash password and delete confirmPassword to avioding save it in DB
-userSchema.pre('save', async function (next) {
-  // this func only runs in case if the password field is modified
-  if (!this.isModified('password')) return next();
-  // we encrypt the password to make database safe from hackers to accessing password
-  this.password = await bcrypt.hash(this.password, 12);
-  // delete confirmpassword because we don't need that any more
-  this.passwordConfirm = undefined;
-  next();
-});
-// when save user doc if password has been changed => set or update passwordChangedAt field
-userSchema.pre('save', function (next) {
-  if (!(this.isModified('password') || this.isNew)) return next();
+// userSchema.pre('save', async function (next) {
+//   // this func only runs in case if the password field is modified
+//   if (!this.isModified('password')) return next();
+//   // we encrypt the password to make database safe from hackers to accessing password
+//   this.password = await bcrypt.hash(this.password, 12);
+//   // delete confirmpassword because we don't need that any more
+//   this.passwordConfirm = undefined;
+//   next();
+// });
+// // when save user doc if password has been changed => set or update passwordChangedAt field
+// userSchema.pre('save', function (next) {
+//   if (!(this.isModified('password') || this.isNew)) return next();
 
-  this.passwordChangedAt = Date.now() - 1000;
+//   this.passwordChangedAt = Date.now() - 1000;
 
-  next();
-});
+//   next();
+// });
 
 // userSchema.checkPasswordAndPasswordConfirm('save', function(next) {
 //   if(!(this.isModified('password'))) return next();

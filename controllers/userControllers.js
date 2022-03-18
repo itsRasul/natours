@@ -1,3 +1,4 @@
+const factory = require('./handlerFactory');
 const catchAsync = require('../utils/catchAsync');
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
@@ -13,29 +14,35 @@ const filterField = (body, ...fields) => {
   return newObj;
 };
 
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
+exports.getAllUsers = factory.getAll(User);
 
-  res.status(404).json({
-    status: 'success',
-    result: users.length,
-    users,
-  });
-});
+exports.getUser = factory.getOne(User);
+
+exports.deleteUser = factory.deleteOne(User);
 
 exports.createUser = catchAsync((req, res, next) => {
   res.status(500).json({
     status: 'error',
-    message: 'this route handling is not yet defiend!',
+    message:
+      'this route handler is not defiend, please use /signup in order to create a user!',
   });
 });
 
-exports.getUser = catchAsync(async (req, res, next) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'this route handling is not yet defiend!',
+exports.getMe = catchAsync(async (req, res, next) => {
+  const currentUser = await User.findById(req.user.id);
+
+  if (!currentUser) {
+    throw new AppError('the user is not exist!', 404);
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user: currentUser,
+    },
   });
 });
+
 // update insensetive data of current user with his token
 exports.updateMe = catchAsync(async (req, res, next) => {
   // 1) make an error if user enterd password and passwordConfirm field
@@ -103,12 +110,5 @@ exports.updateUser = catchAsync(async (req, res, next) => {
     status: 'success',
     message: 'the user has been updated successfully!',
     user,
-  });
-});
-
-exports.deleteUser = catchAsync((req, res, next) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'this route handling is not yet defiend!',
   });
 });

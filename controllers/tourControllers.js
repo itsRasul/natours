@@ -2,6 +2,7 @@ const Tour = require('../models/tourModel');
 const APIFeature = require('../utils/APIFeature');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+
 // Error handling with try catch
 exports.getAllTours = async (req, res, next) => {
   try {
@@ -93,6 +94,7 @@ exports.deleteTour = catchAsync(async (req, res) => {
     data: null,
   });
 });
+
 // aggregation
 exports.getTourStats = catchAsync(async (req, res) => {
   const stats = await Tour.aggregate([
