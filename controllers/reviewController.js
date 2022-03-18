@@ -1,5 +1,6 @@
 const catchAsync = require('../utils/catchAsync');
 const Review = require('../models/reviewModel');
+const factory = require('./handlerFactory');
 const AppError = require('../utils/appError');
 
 exports.getAllReviews = catchAsync(async (req, res, next) => {
@@ -19,9 +20,48 @@ exports.getAllReviews = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getReview = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
-  const review = await Review.find({ _id: id });
+exports.setTourUserIds = catchAsync(async (req, res, next) => {
+  // in this middleWare we set tour and user id to req.body (in case there aren't in req.body)
+  // to use it in next middleware
+
+  if (!req.body.tour) req.body.tour = req.params.tourId;
+  if (!req.body.user) req.body.user = req.user.id;
+  next();
+});
+
+exports.deleteMyReview = catchAsync(async (req, res, next) => {
+  const { reviewId } = req.params;
+  // user wants to delete review (without considering which tour review belongs to)
+  const review = await Review.findOneAndDelete({
+    _id: reviewId,
+    user: { _id: req.user.id },
+  });
+
+  if (!review) {
+    throw new AppError('review has not found', 404);
+  }
+
+  res.status(204).json({
+    status: 'success',
+    message: 'review has been deleted successfully!',
+    data: {
+      review,
+    },
+  });
+});
+
+exports.updateMyReview = catchAsync(async (req, res, next) => {
+  const { reviewId } = req.params;
+
+  // user wants to update review (without considering which tour review belongs to)
+  const review = await Review.findOneAndUpdate(
+    { _id: reviewId, user: { _id: req.user.id } },
+    { review: req.body.review, rating: req.body.rating },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
 
   if (!review) {
     throw new AppError('review has not found!', 404);
@@ -29,18 +69,14 @@ exports.getReview = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    review,
+    message: 'review has been updated successfully!',
+    data: {
+      review,
+    },
   });
 });
 
-exports.createReview = catchAsync(async (req, res, next) => {
-  if (!req.body.tour) req.body.tour = req.params.tourId;
-  if (!req.body.user) req.body.user = req.user.id;
-
-  const newReview = await Review.create(req.body);
-
-  res.status(201).json({
-    status: 'success',
-    review: newReview,
-  });
-});
+exports.getReview = factory.getOne(Review);
+exports.createReview = factory.createOne(Review);
+exports.deleteReview = factory.deleteOne(Review);
+exports.updateReview = factory.updateOne(Review);

@@ -17,19 +17,44 @@ router
   .route('/top-5-tours')
   .get(tourController.aliesTopTours, tourController.getAllTours);
 
-router.route('/tour-stats').get(tourController.getTourStats);
+// instead of put authController.protect each route we could use bottom code and get rid of all protect in every route
+// router.use(authController.protect);
+// top code cuases to protect all of routes after this line without puting 'protect' in each route, ok?
+// but actully i didn't do that
 
-router.route('/monthly-tours/:year').get(tourController.getMonthlyTours);
+router
+  .route('/tour-stats')
+  .get(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
+    tourController.getTourStats
+  );
+
+router
+  .route('/monthly-tours/:year')
+  .get(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
+    tourController.getMonthlyTours
+  );
 
 router
   .route('/')
-  .get(authController.protect, tourController.getAllTours)
-  .post(tourController.createTour);
+  .get(tourController.getAllTours)
+  .post(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
+    tourController.createTour
+  );
 
 router
   .route('/:id')
   .get(tourController.getTour)
-  .patch(tourController.updateTour)
+  .patch(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
+    tourController.updateTour
+  )
   .delete(
     authController.protect,
     authController.restrictTo('admin', 'lead-guide'),

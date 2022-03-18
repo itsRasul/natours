@@ -21,7 +21,7 @@ app.use(
     process.env.RATE_LIMITING_TIME_MINUTES
   )
 );
-app.use('/api/v1/users', rateLimiter(5, 10));
+app.use('/api/v1/users', rateLimiter(10, 10));
 // body-parser-middleware
 app.use(express.json());
 

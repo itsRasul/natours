@@ -27,10 +27,16 @@ const tourSchema = new mongoose.Schema(
       type: Number,
       validate: {
         // custome validator
+        // in validate function 'this' keyword points to current doc but just for document validation
+        // and in update validation 'this' keyword points to Global obj Not current doc
+        // so below func cause uses 'this' keyword in it, works just for .save() or .create() and it's not working in .update()
+        // so when you update the doc and change the priceccDiscount this validate always throws err because 'this' poits to global not currentDoc
+        // you can for updating turn runValidator off but in this case all other validators (max, min, type... ) will turn off
+        // so you can instead of doing that, in func check if 'this' points to current doc then validate if not don't validate
         validator: function (val) {
           // this keyWord points to current document
           // this keyWord just points to current document so => this validator just work in .create(), NOT .update()
-          return val < this.price;
+          if (this.price) return val < this.price;
         },
         message: `priceDiscount {VALUE} should be less than ${this.price} field.`,
       },

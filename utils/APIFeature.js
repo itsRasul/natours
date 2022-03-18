@@ -9,10 +9,12 @@ class APIFeature {
     const queryObj = { ...this.queryString };
     const exclude = ['sort', 'limit', 'page', 'fields'];
     exclude.forEach((el) => delete queryObj[el]);
+    // this.queryObj => { price: { gt: '300' }, difficulty: 'easy' }
 
     // 1B) ADD ADVANCED FILTERING OPERATIONS (LTE-LT-GTE-GT OPERATIONS)
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (match) => `$${match}`);
+
     this.query = this.query.find(JSON.parse(queryStr));
 
     return this;
@@ -41,7 +43,7 @@ class APIFeature {
 
   paginate() {
     const page = this.queryString.page * 1 || 1;
-    const limit = this.queryString.limit * 1 || 3;
+    const limit = this.queryString.limit * 1 || 12;
     const skip = (page - 1) * limit;
 
     this.query = this.query.skip(skip).limit(limit);
