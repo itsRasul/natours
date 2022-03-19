@@ -7,13 +7,13 @@ const User = require('../../models/userModel');
 
 dotenv.config();
 
-// const DB = process.env.DATABASE.replace(
-//   '<PASSWORD>',
-//   process.env.DATABASE_PASSWORD
-// );
+const DB = process.env.DATABASE.replace(
+  '<PASSWORD>',
+  process.env.DATABASE_PASSWORD
+);
 
 mongoose
-  .connect('mongodb+srv://rasul:13812015@cluster0.g6exc.mongodb.net/natours', {
+  .connect(DB, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false,
