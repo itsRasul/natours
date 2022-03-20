@@ -58,23 +58,23 @@ const userSchema = new mongoose.Schema({
   resetPasswordExpires: Date,
 });
 // hash password and delete confirmPassword to avioding save it in DB
-// userSchema.pre('save', async function (next) {
-//   // this func only runs in case if the password field is modified
-//   if (!this.isModified('password')) return next();
-//   // we encrypt the password to make database safe from hackers to accessing password
-//   this.password = await bcrypt.hash(this.password, 12);
-//   // delete confirmpassword because we don't need that any more
-//   this.passwordConfirm = undefined;
-//   next();
-// });
-// // when save user doc if password has been changed => set or update passwordChangedAt field
-// userSchema.pre('save', function (next) {
-//   if (!(this.isModified('password') || this.isNew)) return next();
+userSchema.pre('save', async function (next) {
+  // this func only runs in case if the password field is modified
+  if (!this.isModified('password')) return next();
+  // we encrypt the password to make database safe from hackers to accessing password
+  this.password = await bcrypt.hash(this.password, 12);
+  // delete confirmpassword because we don't need that any more
+  this.passwordConfirm = undefined;
+  next();
+});
+// when save user doc if password has been changed => set or update passwordChangedAt field
+userSchema.pre('save', function (next) {
+  if (!(this.isModified('password') || this.isNew)) return next();
 
-//   this.passwordChangedAt = Date.now() - 1000;
+  this.passwordChangedAt = Date.now() - 1000;
 
-//   next();
-// });
+  next();
+});
 
 // userSchema.checkPasswordAndPasswordConfirm('save', function(next) {
 //   if(!(this.isModified('password'))) return next();
@@ -98,7 +98,8 @@ userSchema.methods.isChangedPassword = function (JWTTimeStamp) {
   }
   return false;
 };
-
+// intance method
+// The methodes tha declare this way (Schema.methods.blah) are accessble in documents that created by this schema(or model)
 userSchema.methods.createResetPasswordToken = function () {
   // create a reset Token using crypto module
   // we don't use jwt because it's not that important and security issue
@@ -108,6 +109,8 @@ userSchema.methods.createResetPasswordToken = function () {
   // becuase resetPassword is almost like real password,
   // user send the reset password to us, and we should compare that with the resetPassword we have in DB
   // just like real password we encrypt resetPassword for avoiding damage of hackers
+
+  // poit: this points to current document
   this.resetPassword = crypto
     .createHash('sha256')
     .update(resetToken)

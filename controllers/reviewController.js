@@ -38,7 +38,10 @@ exports.deleteMyReview = catchAsync(async (req, res, next) => {
   });
 
   if (!review) {
-    throw new AppError('review has not found', 404);
+    throw new AppError(
+      'review has not found, or you are not who has written this review',
+      404
+    );
   }
 
   res.status(204).json({
@@ -72,6 +75,22 @@ exports.updateMyReview = catchAsync(async (req, res, next) => {
     message: 'review has been updated successfully!',
     data: {
       review,
+    },
+  });
+});
+
+exports.deleteAllReviews = catchAsync(async (req, res, next) => {
+  const { tourId } = req.params;
+  const reviews = await Review.deleteMany({ tour: tourId });
+
+  if (!reviews) {
+    throw new AppError('there is no review on this tour!', 404);
+  }
+  res.status(204).json({
+    status: 'success',
+    message: 'all the review on this tour has been deleted successfully!',
+    data: {
+      reviews,
     },
   });
 });

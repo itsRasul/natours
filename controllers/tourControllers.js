@@ -171,3 +171,48 @@ exports.aliesTopTours = catchAsync(async (req, res, next) => {
 
   next();
 });
+
+exports.getToursWithin = catchAsync(async (req, res, next) => {
+  // latitude: mokhtasat arzi joghrafiaie
+  // longitude:  mokhtasat tooli joghrafiaie
+  const { latlng, distance, unit } = req.params;
+
+  const [latitude, longitude] = latlng.split(',');
+
+  console.log(distance, unit, latitude, longitude);
+
+  if (!latitude || !longitude) {
+    throw new AppError(
+      'please enter latitude and longitude in this format: "latitude,longitude"',
+      400
+    );
+  }
+
+  // radius utit should be radian
+  // to convert mile and kilometer in radin:
+  const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1;
+  // distance = earth radius * radians (radian is a degree)
+  // radians = distance / earth radius
+  // km radians = distance in km / 6371
+  // mi radians = distance in mi / 3959
+  // i don't get it, you could consider radius to radian
+  // 6371 is radius of erth in km
+  // distance is the distance of my location to a tour
+  // and distance / radius => radian(kind of degree)
+  // radius sould not be radius:/, i mean depending on this logig now instead of radius we should have radian:|
+  // and also mongoose want us to put radian in query too, but it named it radius instead of radian
+  // i don't get this, but to make our life easier, consider radius to radian for now
+  const tours = await Tour.find({
+    startLocation: {
+      $geoWithin: { $centerSphere: [[longitude, latitude], radius] },
+    },
+  });
+
+  res.status(200).json({
+    status: 'success',
+    result: tours.length,
+    data: {
+      data: tours,
+    },
+  });
+});
