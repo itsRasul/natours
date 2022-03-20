@@ -26,6 +26,14 @@ router
   .patch(authController.protect, reviewController.updateMyReview);
 
 router
+  .route('/deleteAllRviews')
+  .delete(
+    authController.protect,
+    authController.restrictTo('admin'),
+    reviewController.deleteAllReviews
+  );
+
+router
   .route('/:id')
   .get(reviewController.getReview)
   .patch(

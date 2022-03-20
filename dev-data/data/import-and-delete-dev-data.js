@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const fs = require('fs');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
@@ -7,13 +8,13 @@ const User = require('../../models/userModel');
 
 dotenv.config();
 
-const DB = process.env.DATABASE.replace(
-  '<PASSWORD>',
-  process.env.DATABASE_PASSWORD
-);
+// const DB = process.env.DATABASE.replace(
+//   '<PASSWORD>',
+//   process.env.DATABASE_PASSWORD
+// );
 
 mongoose
-  .connect(DB, {
+  .connect('mongodb+srv://rasul:13812015@cluster0.g6exc.mongodb.net/natours', {
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false,
@@ -32,8 +33,8 @@ const users = JSON.parse(fs.readFileSync(`${__dirname}/users.json`, 'utf-8'));
 const deleteData = async () => {
   try {
     await Tour.deleteMany();
-    await User.deleteMany();
-    await Review.deleteMany();
+    // await User.deleteMany();
+    // await Review.deleteMany();
     console.log('Data deleted successfully!');
   } catch (err) {
     console.log(err);
@@ -46,8 +47,8 @@ const deleteData = async () => {
 const importData = async () => {
   try {
     await Tour.create(tours);
-    await User.create(users, { validateBeforeSave: false });
-    await Review.create(reviews);
+    // await User.create(users, { validateBeforeSave: false });
+    // await Review.create(reviews);
     console.log('Data is imported to DB successfully!');
   } catch (err) {
     console.log(err);

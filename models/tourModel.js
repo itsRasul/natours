@@ -59,6 +59,9 @@ const tourSchema = new mongoose.Schema(
       default: 4.5,
       min: [1, 'The rating field must be above 1.0'],
       max: [5, 'The rating field must be below 5.0'],
+      // set is a function that is called whenevere a new value is seted to ratingAverage, gets a arg that is The new value
+      // which is setted to ratingAverage and this func manipulates that
+      set: (val) => parseFloat(val.toFixed(1)),
     },
     ratingQuantity: {
       type: Number,
@@ -82,7 +85,7 @@ const tourSchema = new mongoose.Schema(
         default: 'Point',
         enum: ['Point'],
       },
-      coordinate: [Number],
+      coordinates: [Number],
       description: String,
       address: String,
     },
@@ -93,7 +96,7 @@ const tourSchema = new mongoose.Schema(
           default: 'Point',
           enum: ['Point'],
         },
-        coordinate: [Number],
+        coordinates: [Number],
         address: String,
         description: String,
       },
@@ -135,6 +138,11 @@ tourSchema.virtual('review', {
   foreignField: 'tour',
   localField: '_id',
 });
+
+// indexes:
+// we index fields which are mostly queried and this improve read performance of DB
+tourSchema.index({ price: 1 });
+tourSchema.index({ price: 1, ratingAverage: -1 });
 
 // DOCUMENT MIDDLEWARES (THEY JUST WORK ON .SAVE & .CREATE METHOD | DON'T WORK ON .UPDATE .DELETE etc.)
 // PRE MIDDLEWARE

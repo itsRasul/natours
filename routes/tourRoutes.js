@@ -38,6 +38,13 @@ router
     tourController.getMonthlyTours
   );
 
+// for quering tours which are near about to our location we define this route
+// of course we could also query like this: tours?distance=400&lanlat=0.5584,1.54874&unit=km
+// but we preferred to define endpoint like bottom line:
+router
+  .route('/tours-within/:distance/center/:latlng/unit/:unit')
+  .get(tourController.getToursWithin);
+
 router
   .route('/')
   .get(tourController.getAllTours)
