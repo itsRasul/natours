@@ -179,8 +179,6 @@ exports.getToursWithin = catchAsync(async (req, res, next) => {
 
   const [latitude, longitude] = latlng.split(',');
 
-  console.log(distance, unit, latitude, longitude);
-
   if (!latitude || !longitude) {
     throw new AppError(
       'please enter latitude and longitude in this format: "latitude,longitude"',
@@ -208,11 +206,68 @@ exports.getToursWithin = catchAsync(async (req, res, next) => {
     },
   });
 
+  // #centerSphere = [ [ longitude, latitude ], radius]
+  //                      center point        degree      =>  distance => DB querys geos within this distance
+
   res.status(200).json({
     status: 'success',
     result: tours.length,
     data: {
       data: tours,
+    },
+  });
+});
+
+// we wanna get all tour's distances from specific point
+
+exports.tourDistances = catchAsync(async (req, res, next) => {
+  const { latlng, unit } = req.params;
+  const [latitude, longtitude] = latlng.split(',');
+
+  if (!latitude || !longtitude) {
+    throw new AppError(
+      'please enter latitute and longtitude in this format: "latitude,longtitude"',
+      400
+    );
+  }
+
+  const multiplier = unit === 'mi' ? 0.000621371 : 0.001;
+
+  const distances = await Tour.aggregate([
+    // geoNear stage needs to be the first stage
+    // geoNear is only stagee that about to geoSpetial aggregation
+    // geoNear requires at least one field that has geospatial index (startLocation is in index)
+    // each filed that is in geospatial index is considered by this aggregation in order to perform calculate data
+    // if two fileds are in geospatial index we must to use 'keys' parqameter in order to controll that which one to use
+    {
+      $geoNear: {
+        // one of the parameter we have to use in geoNear in 'near',
+        // 'near' is the point from which to calculate the distances, so all the distances will be calculate from this point
+        near: {
+          // we need to define near parameter in geo json format
+          type: 'Point',
+          coordinates: [longtitude * 1, latitude * 1],
+        },
+        // another parameter we have to use is 'distanceField', in this parameter we have to specify the name of distance field
+        // that we wanna store distance data
+        distanceField: 'distance',
+        // another field that we can use in $geoNear stage is distanceMultiplier, in this field we specify one number that divides distances by itself
+        // actully we convert unit's distances in this way
+        distanceMultiplier: multiplier,
+      },
+    },
+    {
+      $project: {
+        distance: 1,
+        name: 1,
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      data: distances,
     },
   });
 });

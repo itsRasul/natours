@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 // const validator = require('validator');
@@ -143,6 +144,10 @@ tourSchema.virtual('review', {
 // we index fields which are mostly queried and this improve read performance of DB
 tourSchema.index({ price: 1 });
 tourSchema.index({ price: 1, ratingAverage: -1 });
+tourSchema.index({ startLocation: '2dsphere' });
+// top index can not to be just '1' becuase it's a diffrent index, the index is about geospatial data so type of index should be diffrenet
+// index should be 2dsphere if location is real on a sphere like erth
+// index should be 2d if locations is ficion in two dimensional
 
 // DOCUMENT MIDDLEWARES (THEY JUST WORK ON .SAVE & .CREATE METHOD | DON'T WORK ON .UPDATE .DELETE etc.)
 // PRE MIDDLEWARE
@@ -190,9 +195,17 @@ tourSchema.pre(/^find/, function (next) {
 tourSchema.pre('aggregate', function (next) {
   // this points to aggregate obj
   // this.pipeline() points to aggregate array that we wrote[{$match:...},{},...]
-  this.pipeline().unshift({ $match: { secret: { $ne: true } } });
+
+  // we wanna put an stage in order to get back just non-secret tours
+  // but we have a problme, if we do this siply without this condition we get an Error in geo aggregation
+  // because in geo aggregation $geoNear stage shold be always first stage, but by this statement it turns to be second one
+  // in order to prevent this happen, we put this if statement here, it causes if we had a geo aggregation not do that
+  if (this.pipeline()[0]['$geoNear'] === undefined) {
+    this.pipeline().unshift({ $match: { secret: { $ne: true } } });
+  }
   next();
 });
+
 const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;
