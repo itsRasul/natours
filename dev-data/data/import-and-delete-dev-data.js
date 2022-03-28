@@ -59,4 +59,4 @@ const importData = async () => {
 // ******** delete func will delete All the docs in tours collection ************
 // deleteData();
 // ******** import func will import All the tours.json to tours collection ************
-importData();
+// importData();
