@@ -3,15 +3,27 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
+const favicon = require('serve-favicon');
 const rateLimiter = require('./utils/limiter');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
+const viewRouter = require('./routes/viewRoutes');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 
 const app = express();
 
+// specify which template engine we wanna use
+app.set('view engine', 'pug');
+// specify where the path of folder that files about views are located (path of views folder)
+app.set('views', `${__dirname}/views`);
+
+// MiddleWares
+// this middleware cuases to serve static files
+app.use(express.static(`${__dirname}/public`));
+// set favicon
+app.use(favicon(`${__dirname}/public/img/favicon.png`));
 // security-http-headers-middleware
 app.use(helmet());
 // rate-limiter-middleware
@@ -34,6 +46,7 @@ app.use(xss());
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
 // own middlewares | set routers to specific route
+app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);

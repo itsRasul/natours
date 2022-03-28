@@ -55,7 +55,7 @@ const tourSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    ratingAverage: {
+    ratingsAverage: {
       type: Number,
       default: 4.5,
       min: [1, 'The rating field must be above 1.0'],
@@ -64,7 +64,7 @@ const tourSchema = new mongoose.Schema(
       // which is setted to ratingAverage and this func manipulates that
       set: (val) => parseFloat(val.toFixed(1)),
     },
-    ratingQuantity: {
+    ratingsQuantity: {
       type: Number,
       default: 0,
     },
