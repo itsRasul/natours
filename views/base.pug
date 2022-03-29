@@ -1,12 +1,17 @@
 doctype html
 html 
 	head
-		meta(charset='UTF-8')
-		meta(name='viewport', content='width=device-width, initial-scale=1.0')
-		link(href='https://fonts.googleapis.com/css?family=Lato:300,300i,700', rel='stylesheet')
-		link(rel='stylesheet', href='css/style.css')
-		link(rel='shortcut icon' type='image/png' href='img/favicon.png')
-		title Natours | #{title}
+		block head 
+			meta(charset='UTF-8')
+			meta(name='viewport', content='width=device-width, initial-scale=1.0')
+			//- meta(http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://www.google.com")
+			link(href='https://fonts.googleapis.com/css?family=Lato:300,300i,700', rel='stylesheet')
+			link(rel='stylesheet', href='/css/style.css')
+			link(rel='shortcut icon' type='image/png' href='/img/favicon.png')
+			title Natours | #{title}
+			script(src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js')
+			link(href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet')
+			
 	body
 		// HEADER
 		include _header
@@ -17,3 +22,11 @@ html
 
 		// FOOTER
 		include _footer
+		
+		
+		script(src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js')
+		script(src="//cdn.jsdelivr.net/npm/sweetalert2@11")
+		script(src="sweetalert2.all.min.js")
+		script(src=`/js/mapBox.js`)
+		script(src='/js/login.js')
+		script(src='/js/logout.js')

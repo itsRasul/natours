@@ -23,6 +23,7 @@
   "homepage": "https://github.com/itsRasul/natours#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "cookie-parser": "^1.4.6",
     "dotenv": "^13.0.1",
     "express": "^4.17.2",
     "express-mongo-sanitize": "^2.2.0",
@@ -36,6 +37,7 @@
     "pug": "^3.0.2",
     "serve-favicon": "^2.5.0",
     "slugify": "^1.6.5",
+    "sweetalert2": "^11.4.8",
     "validator": "^13.7.0",
     "xss-clean": "^0.1.1"
   },
