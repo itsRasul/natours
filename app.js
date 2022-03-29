@@ -1,8 +1,9 @@
 const express = require('express');
 const morgan = require('morgan');
-const helmet = require('helmet');
-const xss = require('xss-clean');
-const mongoSanitize = require('express-mongo-sanitize');
+// const helmet = require('helmet');
+// const xss = require('xss-clean');
+// const mongoSanitize = require('express-mongo-sanitize');
+const cookieParser = require('cookie-parser');
 const favicon = require('serve-favicon');
 const rateLimiter = require('./utils/limiter');
 const tourRouter = require('./routes/tourRoutes');
@@ -25,7 +26,7 @@ app.use(express.static(`${__dirname}/public`));
 // set favicon
 app.use(favicon(`${__dirname}/public/img/favicon.png`));
 // security-http-headers-middleware
-app.use(helmet());
+// app.use(helmet());
 // rate-limiter-middleware
 app.use(
   rateLimiter(
@@ -36,11 +37,11 @@ app.use(
 app.use('/api/v1/users', rateLimiter(10, 10));
 // body-parser-middleware
 app.use(express.json());
-
+app.use(cookieParser());
 // data sanitization against NoSQL query injection
-app.use(mongoSanitize());
+// app.use(mongoSanitize());
 // data sanitization against XSS
-app.use(xss());
+// app.use(xss());
 
 // logger-middleware
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));

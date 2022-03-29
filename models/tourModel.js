@@ -118,7 +118,7 @@ const tourSchema = new mongoose.Schema(
           'The difficulty field must be between [easy, medium, difficult]',
       },
     },
-    startDates: [String],
+    startDates: [Date],
     secret: {
       type: Boolean,
       default: false,

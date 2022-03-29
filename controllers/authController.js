@@ -65,7 +65,7 @@ exports.login = catchAsync(async (req, res, next) => {
   // 1) check user and password exist in req.body
   const { email, password } = req.body;
   if (!email || !password) {
-    throw new AppError('please provide your email and password', 401);
+    throw new AppError('please provide your email and password', 400);
   }
   // 2) if user exist && password is correct
   const user = await User.findOne({ email }).select('+password');
@@ -73,7 +73,7 @@ exports.login = catchAsync(async (req, res, next) => {
   // 3) if everyThing is ok, create a new token and send it to client
 
   if (!user || !(await user.correctPassword(password, user.password))) {
-    throw new AppError('email or password are incorrect!', 401);
+    throw new AppError('email or password are incorrect!', 400);
   }
   createSendToken(user, 200, res, 'you are logged in successfully!');
 });
@@ -89,6 +89,8 @@ exports.protect = catchAsync(async (req, res, next) => {
   ) {
     // req.headers.authorization.split(' ') => ['brearer', '<TOKEN>']
     token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
   }
   if (!token) {
     throw new AppError(
@@ -126,6 +128,50 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = currentUser;
 
   next();
+});
+
+exports.isLoggedIn = catchAsync(async (req, res, next) => {
+  // we wanna run this function only in views routes
+  // the purpose of this function is similar to protect function
+  // it means the func checks if user is logged in or not, but if user is NOT logged in no error will be appear
+  // and if user actully is logged in we put the user in 'res.locals' in order to ability of accessing user in pug template
+  // as you know, everything that is in res.locals we can access that in pug, so if we put the user in res.locals.user
+  // we can access in pug like this => user
+  // and there (in pug) we check if user is exist(it means user is logged in), do something if not do another work..
+
+  // 1) check if token exists and it's there
+  let token;
+  if (req.cookies.jwt) {
+    token = req.cookies.jwt;
+
+    if (!token) {
+      return next();
+    }
+
+    // 2) verification token
+    const decodeToken = await promisify(jwt.verify)(
+      token,
+      process.env.JWT_SECRET
+    );
+
+    // 3) check if user still exists
+    const currentUser = await User.findById(decodeToken.id).select('+password');
+    if (!currentUser) {
+      return next();
+    }
+
+    // 4) check if user changed the password after the token was issued
+    const changedPassword = currentUser.isChangedPassword(decodeToken.iat);
+    if (changedPassword) {
+      return next();
+    }
+
+    // if compiler reachs at this posit and no error has occured,
+    // it means user have token correctly, so let him/her to access current middleware
+    res.locals.user = currentUser;
+    return next();
+  }
+  return next();
 });
 
 exports.restrictTo = function (...roles) {
@@ -276,4 +322,20 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
     message: 'user has been deleted successfully!',
     user,
   });
+});
+
+exports.logout = catchAsync(async (req, res, next) => {
+  if (req.cookies.jwt) {
+    // user is logged in, wants to logged out
+    res.status(200).clearCookie('jwt').json({
+      status: 'success',
+      message: 'you are logged out successfully!',
+    });
+  } else {
+    // user in NOT logged in already
+    res.status(400).json({
+      status: 'fail',
+      message: 'you are logged out already!',
+    });
+  }
 });
