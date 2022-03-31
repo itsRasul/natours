@@ -1,5 +1,5 @@
 const Tour = require('../models/tourModel');
-// const AppError = require('../utils/appError');
+const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
 exports.getOverview = catchAsync(async (req, res, next) => {
@@ -21,6 +21,10 @@ exports.getTour = catchAsync(async (req, res) => {
     path: 'review',
     select: '-__V',
   });
+
+  if (!tour) {
+    throw new AppError('this tour is not exist!', 404);
+  }
   // 2) build template
   // 3) render template considering step 1
   res
@@ -40,3 +44,32 @@ exports.login = catchAsync(async (req, res, next) => {
     title: 'login',
   });
 });
+
+exports.getMe = (req, res) => {
+  res.status(200).render('account', {
+    title: 'Me',
+  });
+};
+
+// UPDATE USER DATA FROM FORM SUBMITTED (NOT API) getting data from forms
+
+// exports.updateUserData = catchAsync(async (req, res, next) => {
+//   const { name, email } = req.body;
+//   const updatedUser = await User.findByIdAndUpdate(
+//     req.user.id,
+//     {
+//       name,
+//       email,
+//     },
+//     {
+//       new: true,
+//       runValidators: true,
+//     }
+//   );
+//   if (!updatedUser) throw new AppError('user not found!', 404);
+
+//   res.status(200).render('account', {
+//     title: 'Me',
+//     user: updatedUser,
+//   });
+// });

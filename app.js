@@ -38,6 +38,8 @@ app.use('/api/v1/users', rateLimiter(10, 10));
 // body-parser-middleware
 app.use(express.json());
 app.use(cookieParser());
+// in order to parse form data comming from forms.. extended opt allows us to get complex data from form
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 // data sanitization against NoSQL query injection
 // app.use(mongoSanitize());
 // data sanitization against XSS

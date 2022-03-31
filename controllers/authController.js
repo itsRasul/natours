@@ -126,7 +126,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   // if compiler reachs at this posit and no error has occured,
   // it means user have token correctly, so let him/her to access current middleware
   req.user = currentUser;
-
+  res.locals.user = currentUser;
   next();
 });
 

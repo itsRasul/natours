@@ -3,6 +3,8 @@
 // the problme was about csp (Content-Security-Policy), i disabled security middlewares like helmet and xss-clean
 // and generally disable csp and the problme is solved now!
 document.addEventListener('DOMContentLoaded', function () {
+  if (!document.getElementById('map')) return;
+
   const locations = JSON.parse(
     document.getElementById('map').dataset.locations
   );
@@ -42,12 +44,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
   map.fitBounds(bounds, {
     padding: {
-      top: 200,
-      bottom: 150,
-      left: 100,
-      rigth: 100,
+      top: 250,
+      bottom: 200,
+      left: 200,
+      rigth: 200,
     },
   });
-
-  console.log('hey');
 });
