@@ -27,8 +27,10 @@
   div(class='card__footer')
     p
       span(class='card__footer-value')= `$${tour.price}`
+      | 
       span(class='card__footer-text') per person
     p(class='card__ratings')
       span(class='card__footer-value')= `${tour.ratingsAverage}`
+      | 
       span(class='card__footer-text')= `rating (${tour.ratingsQuantity})`
     a.btn.btn--green.btn--small(href=`/tours/${tour.slug}`) Details
