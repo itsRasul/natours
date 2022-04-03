@@ -1,4 +1,6 @@
 const express = require('express');
+// to parsing uploaded files from forms
+
 const userController = require('../controllers/userControllers');
 const authController = require('../controllers/authController');
 
@@ -31,7 +33,12 @@ router
 router.route('/me').get(authController.protect, userController.getMe);
 router
   .route('/updateMe')
-  .patch(authController.protect, userController.updateMe);
+  .patch(
+    authController.protect,
+    userController.uploadUserPhoto,
+    userController.resizeUserPhoto,
+    userController.updateMe
+  );
 
 router
   .route('/deleteMe')

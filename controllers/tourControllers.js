@@ -1,8 +1,67 @@
+const multer = require('multer');
+const sharp = require('sharp');
 const Tour = require('../models/tourModel');
 const APIFeature = require('../utils/APIFeature');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
+const storageTourImages = multer.memoryStorage();
+
+const tourFileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) cb(null, true);
+  else cb(new AppError('please just upload images!', 400), false);
+};
+
+const upload = multer({
+  storage: storageTourImages,
+  fileFilter: tourFileFilter,
+});
+
+exports.uploadTourImages = upload.fields([
+  {
+    name: 'imageCover',
+    maxCount: 1,
+  },
+  {
+    name: 'images',
+    maxCount: 3,
+  },
+]); // req.files => {imageCover: [file], images: [file, file, file]}
+
+// upload.single('photo')   returns {photo: {file}}
+// upload.array('images', 4)  returns [{file},{file}]
+
+exports.resizeTourImages = catchAsync(async (req, res, next) => {
+  // resize imageCover
+  console.log(req.files);
+
+  // passing name of the image cover to req.body in order to storing name photo in DB in next
+  // middleware by Ability of accissing name of the imageCover
+  req.body.imageCover = `tour-${req.user.id}-${Date.now()}-cover.jpeg`;
+  await sharp(req.files.imageCover[0].buffer)
+    .resize(2000, 1333)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/tours/${req.body.imageCover}`);
+
+  // resize images
+
+  req.body.images = [];
+
+  const promises = req.files.images.map(async (image, i) => {
+    const nameImage = `tour-${req.user.id}-${Date.now()}-images-${i}.jpeg`;
+    await sharp(image.buffer)
+      .resize(2000, 1333)
+      .toFormat('jpeg')
+      .jpeg({ quality: 90 })
+      .toFile(`public/img/tours/${nameImage}`);
+    req.body.images.push(nameImage);
+  });
+
+  await Promise.all(promises);
+
+  next();
+});
 // Error handling with try catch
 exports.getAllTours = async (req, res, next) => {
   try {

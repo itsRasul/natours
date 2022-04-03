@@ -13,14 +13,17 @@ document.addEventListener('DOMContentLoaded', function () {
       e.preventDefault();
       const name = document.querySelector('input[name="name"]').value;
       const email = document.querySelector('input[name="email"]').value;
-
+      const photoFile = document.getElementById('photo').files[0];
+      console.log(photoFile);
+      const formData = new FormData();
+      console.log(formData);
+      formData.append('name', name);
+      formData.append('email', email);
+      formData.append('photo', photoFile);
       const res = await axios({
         method: 'PATCH',
         url: 'http://127.0.0.1:3000/api/v1/users/updateMe',
-        data: {
-          name,
-          email,
-        },
+        data: formData,
       });
 
       Swal.fire({
@@ -30,10 +33,6 @@ document.addEventListener('DOMContentLoaded', function () {
         showConfirmButton: false,
         timer: 1500,
       });
-
-      setTimeout(() => {
-        window.location.reload(true);
-      }, 1500);
     } catch (err) {
       console.log(err);
       // error
