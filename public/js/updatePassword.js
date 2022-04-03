@@ -1,7 +1,7 @@
 /*eslint-disable*/
 document.addEventListener('DOMContentLoaded', function () {
   const changePassForm = document.querySelector('.form-user-password');
-  console.log(changePassForm);
+
   if (!changePassForm) return;
 
   const ChangePasswordBtn = document.querySelector(
