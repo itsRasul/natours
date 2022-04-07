@@ -66,7 +66,7 @@ const sendErrorProd = (err, req, res) => {
     }
   }
   // WE ARE IN RENDERED WEBSITE
-  if (err.isOperational) {
+  else if (err.isOperational) {
     // we made this error ourself with specific message by AppError
     res.status(err.statusCode).render('error', {
       title: 'Error',
