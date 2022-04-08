@@ -1322,3 +1322,12 @@ body {
   -webkit-transform: translateY(-2px);
   transform: translateY(-2px);
 }
+.like-icon {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+.like-btn {
+  cursor: pointer;
+}

@@ -109,6 +109,10 @@ const tourSchema = new mongoose.Schema(
         ref: 'User',
       },
     ],
+    likesQuantity: {
+      type: Number,
+      default: 0,
+    },
     difficulty: {
       type: String,
       required: [true, 'The tour must have a difficulty'],
@@ -140,6 +144,11 @@ tourSchema.virtual('review', {
   localField: '_id',
 });
 
+tourSchema.virtual('likes', {
+  ref: 'Like',
+  foreignField: 'tour',
+  localField: '_id',
+});
 // indexes:
 // we index fields which are mostly queried and this improve read performance of DB
 tourSchema.index({ price: 1 });

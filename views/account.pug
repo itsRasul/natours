@@ -13,7 +13,7 @@ block content
 			nav.user-view__menu
 				ul.side-nav
 					+navItem('Settings', '#', 'settings', true)
-					+navItem('My bookings', '#', 'briefcase', false)
+					+navItem('My bookings', 'http://127.0.0.1:3000/my-tours', 'briefcase', false)
 					+navItem('My review', '#', 'star', false)
 					+navItem('Billing', '#', 'credit-card', false)
 				- if (user.role === 'admin')
