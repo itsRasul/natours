@@ -33,7 +33,6 @@ exports.uploadTourImages = upload.fields([
 
 exports.resizeTourImages = catchAsync(async (req, res, next) => {
   // resize imageCover
-  console.log(req.files);
 
   // passing name of the image cover to req.body in order to storing name photo in DB in next
   // middleware by Ability of accissing name of the imageCover
