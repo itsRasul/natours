@@ -96,7 +96,9 @@ exports.getTour = catchAsync(async (req, res, next) => {
   // populate: populate method on query causes mongoose take whole data in 'path' property in DB instead of just id
   // to do that, mongoose has to send another query in DB
 
-  const tour = await Tour.findById(req.params.id).populate('review');
+  const tour = await Tour.findById(req.params.id)
+    .populate('review')
+    .populate('likes');
   if (!tour) {
     throw new AppError('This tour is not exist', 404);
     // this Error will be catched by catchAsync func

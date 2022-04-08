@@ -2,6 +2,7 @@ const express = require('express');
 const tourController = require('../controllers/tourControllers');
 const authController = require('../controllers/authController');
 const reviewRouter = require('./reviewRoutes');
+const likeRouter = require('./likeRoutes');
 
 const router = new express.Router();
 
@@ -11,6 +12,7 @@ const router = new express.Router();
 // we want this => POST api/v1/tours/adfs564f1sdf/reviews
 // to create review
 router.use('/:tourId/reviews', reviewRouter);
+router.use('/:tourId/likes', likeRouter);
 
 // router.param('id', tourController.checkId);
 router
