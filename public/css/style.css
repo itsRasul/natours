@@ -676,10 +676,11 @@ body {
 }
 
 .section-cta {
-  margin-top: calc(0px - var(--section-rotate));
+  /* margin-top: calc(0px - var(--section-rotate)); */
   padding: 3rem;
   padding-bottom: 11rem;
-  padding-top: calc(15rem + var(--section-rotate));
+  /* padding-top: calc(15rem + var(--section-rotate)); */
+  padding-top: 50px;
   background-color: #f7f7f7;
 }
 
@@ -1330,4 +1331,55 @@ body {
 }
 .like-btn {
   cursor: pointer;
+}
+.section-giving-review {
+  display: flex;
+  justify-content: center;
+}
+.review-box {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  flex-direction: column;
+  width: 600px;
+  height: 300px;
+  align-items: center;
+}
+#review-content {
+  width: 350px;
+  height: 200px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19);
+  border-radius: 20px;
+  border: none;
+  padding: 30px;
+  margin-bottom: 20px;
+  resize: none;
+  font-size: 17px;
+  color: #444;
+}
+.rating-review {
+  width: 60px;
+  height: 30px;
+  background-color: #20bf6b;
+  color: #efefef;
+  margin: 5px;
+  border: none;
+  box-shadow: 0 0 3px #444;
+  border-radius: 15px;
+  display: inline-block;
+  text-align: center;
+}
+.review-send-btn {
+  background-color: #20bf6b;
+  border: none;
+  border-radius: 15px;
+  color: #efefef;
+  margin: 5px;
+  width: 100px;
+  height: 30px;
+  text-align: center;
+  box-shadow: 0 0 3px #444;
+  display: inline-block;
+  cursor: pointer;
+  font-weight: bold;
 }

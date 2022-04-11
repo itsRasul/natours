@@ -1,4 +1,5 @@
 const catchAsync = require('../utils/catchAsync');
+const Book = require('../models/bookingModel');
 const Review = require('../models/reviewModel');
 const factory = require('./handlerFactory');
 const AppError = require('../utils/appError');
@@ -94,8 +95,31 @@ exports.deleteAllReviews = catchAsync(async (req, res, next) => {
     },
   });
 });
+exports.createReview = catchAsync(async (req, res) => {
+  // before creating review, check if user booked the tour that want to send a review
+  const booking = await Book.findOne({
+    user: req.user.id,
+    tour: req.body.tour,
+  });
+  if (booking) {
+    // user booked this tour, so he can review on it
+    const review = await Review.create(req.body);
+    res.status(200).json({
+      status: 'success',
+      message: 'your review has been submitted successfully!',
+      data: {
+        data: review,
+      },
+    });
+  } else {
+    // user has not booked this tour, so he can't review on it
+    res.status(403).json({
+      status: 'fail',
+      message: "you can't give a review on a tour which you have not booked!",
+    });
+  }
+});
 
 exports.getReview = factory.getOne(Review);
-exports.createReview = factory.createOne(Review);
 exports.deleteReview = factory.deleteOne(Review);
 exports.updateReview = factory.updateOne(Review);
