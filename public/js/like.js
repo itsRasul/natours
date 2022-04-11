@@ -3,8 +3,10 @@
 document.addEventListener('DOMContentLoaded', function () {
   const likeBtn = document.querySelector('.like-btn');
   const likeIcon = document.querySelector('.like-icon');
-  const tourId = likeBtn.dataset.tour;
+
   if (!likeBtn) return;
+
+  const tourId = likeBtn.dataset.tour;
 
   likeBtn.addEventListener('click', async () => {
     try {

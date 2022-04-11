@@ -50,7 +50,6 @@ exports.signUp = catchAsync(async (req, res, next) => {
   // WE DON'T TAKE THAT INTO THE DATABASE
   // FOR CREATE A ADMIN WE CAN CREATE A NORMAL USER AND GO TO DATABASE AND MODIFY
   // ROLE PROPERTY TO "ADMIN" INSTEAD OF "USER".
-
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
