@@ -87,7 +87,6 @@ exports.protect = catchAsync(async (req, res, next) => {
   // point: WE USULLY SEND TOKEN IN HEADER REQUEST (NOT BODY) THIS WAY => authorization: brearer <TOKEN>
   // or send token in cookies
   // 1) check if token exists and it's there
-  console.log('hooiy');
   let token;
   if (
     req.headers.authorization &&
@@ -133,7 +132,6 @@ exports.protect = catchAsync(async (req, res, next) => {
   // it means user have token correctly, so let him/her to access current middleware
   req.user = currentUser;
   res.locals.user = currentUser;
-  console.log(currentUser);
   next();
 });
 
@@ -176,6 +174,7 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
     // if compiler reachs at this posit and no error has occured,
     // it means user have token correctly, so let him/her to access current middleware
     res.locals.user = currentUser;
+    req.user = currentUser;
     return next();
   }
   return next();
