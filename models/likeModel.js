@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const AppError = require('../utils/appError');
 const Tour = require('./tourModel');
 
 const likeSchema = new mongoose.Schema({
@@ -16,7 +17,7 @@ const likeSchema = new mongoose.Schema({
 
 likeSchema.index({ user: 1, tour: 1 }, { unique: true });
 
-likeSchema.pre(/^findOne/, function () {
+likeSchema.pre(/^findOne/, function (next) {
   this.populate({
     path: 'tour',
     select: { name: 1 },
@@ -24,6 +25,8 @@ likeSchema.pre(/^findOne/, function () {
     path: 'user',
     select: 'name photo',
   });
+
+  next();
 });
 
 // this func is accessble in model
@@ -31,10 +34,9 @@ likeSchema.statics.addOneLikeToTourInLikesQuantityField = async function (
   tourId,
   operator
 ) {
-  let tour;
   // this points to model
   if (operator === 'plus') {
-    tour = await Tour.findOneAndUpdate(
+    await Tour.findOneAndUpdate(
       { _id: tourId },
       {
         //$inc stands for increment
@@ -45,7 +47,7 @@ likeSchema.statics.addOneLikeToTourInLikesQuantityField = async function (
       }
     );
   } else {
-    tour = await Tour.findOneAndUpdate(
+    await Tour.findOneAndUpdate(
       { _id: tourId },
       {
         $inc: { likesQuantity: -1 },
@@ -55,26 +57,27 @@ likeSchema.statics.addOneLikeToTourInLikesQuantityField = async function (
       }
     );
   }
-
-  console.log(tour);
 };
 
 // we wanna every time a like is submited increase likesQuantity field in that tour, this middleware fun execute in .save() and .create()
-likeSchema.pre('save', function (next) {
+likeSchema.post('save', function () {
   // this points to current doc
   this.constructor.addOneLikeToTourInLikesQuantityField(this.tour, 'plus');
-  next();
 });
 // we wanna execute addOneLikeToTour... function when a like has been deleted, this middleware func execute in .findOneAndDelete() and...
 likeSchema.pre(/^findOneAnd/, async function (next) {
   // this points to query
-  const likeDoc = await this.findOne();
+  this.likeDoc = await this.findOne();
+  if (!this.likeDoc)
+    return next(new AppError('there is no like on this tour by you!!', 404));
+  next();
+});
 
-  likeDoc.constructor.addOneLikeToTourInLikesQuantityField(
-    likeDoc.tour,
+likeSchema.post(/^findOneAnd/, function () {
+  this.likeDoc.constructor.addOneLikeToTourInLikesQuantityField(
+    this.likeDoc.tour,
     'minus'
   );
-  next();
 });
 
 const Like = mongoose.model('Like', likeSchema);

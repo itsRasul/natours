@@ -58,6 +58,7 @@ const userSchema = new mongoose.Schema({
   resetPassword: String,
   resetPasswordExpires: Date,
 });
+
 // hash password and delete confirmPassword to avioding save it in DB
 userSchema.pre('save', async function (next) {
   // this func only runs in case if the password field is modified

@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
           password,
         },
       });
-      console.log('success');
+
       Swal.fire({
         position: 'top-end',
         icon: 'success',

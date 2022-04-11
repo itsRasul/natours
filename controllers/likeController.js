@@ -59,14 +59,15 @@ exports.getAllLikes = catchAsync(async (req, res, next) => {
     next(err);
   }
 });
-// exports.deleteAllLikes = catchAsync(async (req, res, next) => {
-//   await Like.findByIdAndDelete();
 
-//   res.status(204).json({
-//     status: 'success',
-//     message: 'all likes are removed!',
-//   });
-// });
+exports.deleteAllLikes = catchAsync(async (req, res, next) => {
+  await Like.deleteMany();
+
+  res.status(204).json({
+    status: 'success',
+    message: 'all likes are removed!',
+  });
+});
 
 exports.getLike = factory.getOne(Like);
 exports.deleteLike = factory.deleteOne(Like);

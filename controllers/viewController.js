@@ -1,3 +1,4 @@
+const Book = require('../models/bookingModel');
 const Tour = require('../models/tourModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
@@ -21,10 +22,12 @@ exports.getTour = catchAsync(async (req, res) => {
     path: 'review',
     select: '-__V',
   });
-
   if (!tour) {
     throw new AppError('this tour is not exist!', 404);
   }
+
+  const bookings = await Book.find().select('user');
+
   // 2) build template
   // 3) render template considering step 1
   res
@@ -36,12 +39,19 @@ exports.getTour = catchAsync(async (req, res) => {
     .render('tour', {
       title: tour.name,
       tour,
+      bookings,
     });
 });
 
 exports.login = catchAsync(async (req, res, next) => {
   res.status(200).render('login', {
     title: 'login',
+  });
+});
+
+exports.signup = catchAsync(async (req, res, next) => {
+  res.status(200).render('signup', {
+    title: 'signup',
   });
 });
 

@@ -11,12 +11,16 @@ router
     authController.restrictTo('admin'),
     likeController.getAllLikes
   )
-  .post(authController.protect, likeController.createLike);
-// .delete(
-//   authController.protect,
-//   authController.restrictTo('admin'),
-//   likeController.deleteAllLikes
-// );
+  .post(authController.protect, likeController.createLike)
+  .delete(
+    authController.protect,
+    authController.restrictTo('admin'),
+    likeController.deleteAllLikes
+  );
+
+router
+  .route('/deleteMyLike')
+  .delete(authController.protect, likeController.deleteMyLike);
 
 router
   .route('/:id')
@@ -26,9 +30,5 @@ router
     authController.restrictTo('admin'),
     likeController.deleteLike
   );
-
-router
-  .route('/deleteMyLike')
-  .delete(authController.protect, likeController.deleteMyLike);
 
 module.exports = router;
