@@ -1,3 +1,4 @@
+const Review = require('../models/reviewModel');
 const Book = require('../models/bookingModel');
 const Tour = require('../models/tourModel');
 const AppError = require('../utils/appError');
@@ -60,6 +61,19 @@ exports.getMe = (req, res) => {
     title: 'Me',
   });
 };
+
+exports.getMyReviews = catchAsync(async (req, res, next) => {
+  const reviews = await Review.find({ user: req.user.id }).populate({
+    path: 'tour',
+    select: 'name slug',
+  });
+  console.log(reviews);
+
+  res.status(200).render('myReviews', {
+    title: 'my Reviews',
+    reviews,
+  });
+});
 
 // UPDATE USER DATA FROM FORM SUBMITTED (NOT API) getting data from forms
 

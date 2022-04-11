@@ -1,0 +1,10 @@
+extends base
+
+include _reviewCard
+
+block content
+  div(style='margin-top: 100px')
+  each review in reviews
+    +reviewCard-myReview(review)
+  div(style='margin-bottom: 100px')
+
