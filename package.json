@@ -23,6 +23,7 @@
   "homepage": "https://github.com/itsRasul/natours#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "dotenv": "^13.0.1",
     "express": "^4.17.2",

@@ -5,6 +5,7 @@ const morgan = require('morgan');
 // const mongoSanitize = require('express-mongo-sanitize');
 const cookieParser = require('cookie-parser');
 const favicon = require('serve-favicon');
+const compression = require('compression');
 const rateLimiter = require('./utils/limiter');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -47,6 +48,8 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 // data sanitization against XSS
 // app.use(xss());
 
+// compression middleware
+app.use(compression());
 // logger-middleware
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 

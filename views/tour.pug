@@ -68,16 +68,31 @@ block content
 		.reviews
 			each review in tour.review
 				+reviewCard(review)
-	//- if user booked this tour don't show up the booking section
-	- const booking = bookings.filter(booking => booking.user._id == user.id && booking.tour._id == tour.id)
-	if(!booking[0])
-		section.section-cta
-			.cta
-				.cta__img.cta__img--logo
-					img(src='/img/logo-white.png', alt='Natours logo')
-				img.cta__img.cta__img--1(src=`/img/tours/${tour.images[0]}`, alt='')
-				img.cta__img.cta__img--2(src=`/img/tours/${tour.images[1]}`, alt='')
-				.cta__content
-					h2.heading-secondary What are you waiting for?
-					p.cta__text= `${tour.duration} days. ${tour.locations.length} adventure. Infinite memories. Make it yours today!`
-					button.btn.btn--green.span-all-rows.booking-btn(data-tour-id=`${tour.id}`, data-user-id=`${user.id}`, data-price=`${tour.price}`) Book tour now!
+	if(user)
+		section.section-giving-review
+			.review-box 
+				h1#review-header.heading-secondary.ma-bt-lg let us to know your review :)
+				textarea#review-content.reviews__text(name="review-content-name")
+				div
+					span.reviews__text rating
+					select(class='rating-review')
+						option(value="1") 1
+						option(value="2") 2
+						option(value="3") 3
+						option(value="4") 4
+						option(value="5" selected ) 5
+					button.review-send-btn(data-tour-id=tour._id, data-user-id=user._id) submit
+	if(user)	
+		//- if user booked this tour don't show up the booking section
+		- const booking = bookings.filter(booking => booking.user._id == user.id && booking.tour._id == tour.id)
+		if(!booking[0])
+			section.section-cta
+				.cta
+					.cta__img.cta__img--logo
+						img(src='/img/logo-white.png', alt='Natours logo')
+					img.cta__img.cta__img--1(src=`/img/tours/${tour.images[0]}`, alt='')
+					img.cta__img.cta__img--2(src=`/img/tours/${tour.images[1]}`, alt='')
+					.cta__content
+						h2.heading-secondary What are you waiting for?
+						p.cta__text= `${tour.duration} days. ${tour.locations.length} adventure. Infinite memories. Make it yours today!`
+						button.btn.btn--green.span-all-rows.booking-btn(data-tour-id=`${tour.id}`, data-user-id=`${user.id}`, data-price=`${tour.price}`) Book tour now!
