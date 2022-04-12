@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       const res = await axios({
         method: 'POST',
-        url: `http://127.0.0.1:3000/api/v1/users/signup`,
+        url: `https://natours-rasul.herokuapp.com/api/v1/users/signup`,
         data: {
           name,
           email,

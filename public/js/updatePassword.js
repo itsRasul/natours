@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
       ChangePasswordBtn.textContent = 'Updating...';
       const res = await axios({
         method: 'PATCH',
-        url: 'http://127.0.0.1:3000/api/v1/users/updateMyPassword',
+        url: 'https://natours-rasul.herokuapp.com/api/v1/users/updateMyPassword',
         data: {
           passwordConfirm,
           password,

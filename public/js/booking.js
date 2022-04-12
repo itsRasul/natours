@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       const res = await axios({
         method: 'POST',
-        url: 'http://127.0.0.1:3000/api/v1/bookings',
+        url: 'https://natours-rasul.herokuapp.com/api/v1/bookings',
         data: {
           tour: bookBtn.dataset.tourId,
           user: bookBtn.dataset.userId,

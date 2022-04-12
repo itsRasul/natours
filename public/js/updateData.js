@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
       formData.append('photo', photoFile);
       const res = await axios({
         method: 'PATCH',
-        url: 'http://127.0.0.1:3000/api/v1/users/updateMe',
+        url: 'https://natours-rasul.herokuapp.com/api/v1/users/updateMe',
         data: formData,
       });
 

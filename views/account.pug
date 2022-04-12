@@ -13,8 +13,8 @@ block content
 			nav.user-view__menu
 				ul.side-nav
 					+navItem('Settings', '#', 'settings', true)
-					+navItem('My bookings', 'http://127.0.0.1:3000/my-tours', 'briefcase', false)
-					+navItem('My review', 'http://127.0.0.1:3000/my-reviews', 'star', false)
+					+navItem('My bookings', 'https://natours-rasul.herokuapp.com/my-tours', 'briefcase', false)
+					+navItem('My review', 'https://natours-rasul.herokuapp.com/my-reviews', 'star', false)
 					+navItem('Billing', '#', 'credit-card', false)
 				- if (user.role === 'admin')
 

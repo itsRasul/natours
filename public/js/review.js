@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const userId = reviewBtn.dataset.userId;
       const res = await axios({
         method: 'POST',
-        url: 'http://127.0.0.1:3000/api/v1/reviews',
+        url: 'https://natours-rasul.herokuapp.com/api/v1/reviews',
         data: {
           review,
           rating: ratingReview,
