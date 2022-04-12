@@ -1,8 +1,8 @@
 node_modules/
 
-public/img/
+# public/img/
 
-dev-data/img/
+# dev-data/img/
 
 .prettierrc
 
