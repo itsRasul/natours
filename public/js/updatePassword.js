@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
       document.querySelector('#password').value = '';
       document.querySelector('#password-confirm').value = '';
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       // error
       ChangePasswordBtn.textContent = 'Save password';
       Swal.fire({

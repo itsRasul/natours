@@ -67,7 +67,6 @@ exports.getMyReviews = catchAsync(async (req, res, next) => {
     path: 'tour',
     select: 'name slug',
   });
-  console.log(reviews);
 
   res.status(200).render('myReviews', {
     title: 'my Reviews',

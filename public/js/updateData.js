@@ -14,9 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const name = document.querySelector('input[name="name"]').value;
       const email = document.querySelector('input[name="email"]').value;
       const photoFile = document.getElementById('photo').files[0];
-      console.log(photoFile);
       const formData = new FormData();
-      console.log(formData);
       formData.append('name', name);
       formData.append('email', email);
       formData.append('photo', photoFile);
@@ -34,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
         timer: 1500,
       });
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       // error
       Swal.fire({
         position: 'top-end',
