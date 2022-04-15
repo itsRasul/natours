@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
       try {
         const res = await axios({
           method: 'DELETE',
-          url: `http://127.0.0.1:3000/api/v1/tours/${tourId}/likes/deleteMyLike`,
+          url: `https://natours-rasul.herokuapp.com/api/v1/tours/${tourId}/likes/deleteMyLike`,
           data: {
             tour: tourId,
           },
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
       try {
         const res = await axios({
           method: 'POST',
-          url: `http://127.0.0.1:3000/api/v1/likes`,
+          url: `https://natours-rasul.herokuapp.com/api/v1/likes`,
           data: {
             tour: tourId,
           },

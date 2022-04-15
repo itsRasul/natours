@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
       try {
         const res = await axios({
           method: 'PATCH',
-          url: 'http://127.0.0.1:3000/api/v1/users/logout',
+          url: 'https://natours-rasul.herokuapp.com/api/v1/users/logout',
         });
         // Swal is not loaded, CSP issus
         // Swal.fire({

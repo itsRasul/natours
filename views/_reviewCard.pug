@@ -21,4 +21,4 @@ mixin reviewCard-myReview(review)
         svg.reviews__star(class=`reviews__star--${review.rating >= star ? 'active' : 'inactive'}`)
           use(xlink:href='/img/icons.svg#icon-star')
     p.reviews__text(style='text-align: left; margin-top: 15px; margin-bottom: 0') for:
-    a.reviews__user(href=`http://127.0.0.1:3000/tours/${review.tour.slug}`)= review.tour.name
+    a.reviews__user(href=`https://natours-rasul.herokuapp.com/tours/${review.tour.slug}`)= review.tour.name
