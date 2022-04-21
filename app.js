@@ -12,6 +12,7 @@ const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const viewRouter = require('./routes/viewRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
+const searchRouter = require('./routes/searchRoutes');
 const likeRouter = require('./routes/likeRoutes');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -60,6 +61,7 @@ app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/bookings', bookingRouter);
 app.use('/api/v1/likes', likeRouter);
+app.use('/api/v1/search', searchRouter);
 
 app.all('*', (req, res, next) => {
   const err = new AppError(`i can't find this URL: ${req.originalUrl}`, 404);
