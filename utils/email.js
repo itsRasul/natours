@@ -36,8 +36,8 @@ module.exports = class Email {
     // return nodeMailer.createTransport({
     //   service: 'gmail',
     //   auth: {
-    //     user: 'rasuljoon4@gmail.com',
-    //     pass: 'R@su!!3812015',
+    //     user: '',
+    //     pass: '',
     //   },
     // });
 
